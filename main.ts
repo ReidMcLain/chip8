@@ -7,7 +7,8 @@ import * as fs from 'fs';
 
 //let instead of var because var gets hoisted to the top
 
-let registers =
+let registers: { [key: string]: number }
+=
 {
     "a": 0,
     "b": 0,
@@ -15,7 +16,7 @@ let registers =
     "d": 0
 }
 
-const inputData = fs.readFileSync('input.txt', 'utf8');
+const inputData = fs.readFileSync('copy.txt', 'utf8');
 
 // console.log(inputData);
 
@@ -26,9 +27,27 @@ const readCommands = inputData.split(/\r?\n/);
 //es6 syntax
 
 //work on these functions
-const copy = (x?: string, y?: string) => {
-
+const copy = (x: string, y: string) => {
+    console.log(`register ${y} before: ${registers[y]}`);
+    registers[y] = x;
+    console.log(`register ${y} after: ${registers[y]}`);
+    // console.log(y);
+    // console.log(x);
 }
+
+ 
+
+// const increase = (x: string) => {
+//     registers[x]++;
+// }
+
+// const decrease = (x: string) => {
+//     registers[x]--;
+// }
+
+// const jump = (x?: string, y?: string) => {
+
+// }
 
 const executeText = () => {
     readCommands.forEach(command => {
@@ -37,22 +56,23 @@ const executeText = () => {
 
         switch (pieces[0]) {
             case 'cpy':
-                copy();
+                copy(pieces[1], pieces[2]);
                 break;
-            case 'inc':
-                increase();
-                break;
-            case 'dec':
-                decrease();
-                break;
-            case 'jnz':
-                jump();
-                break;
+            // case 'inc':
+            //     increase();
+            //     break;
+            // case 'dec':
+            //     decrease();
+            //     break;
+            // case 'jnz':
+            //     jump();
+            //     break;
             default:
         }
     }
     )
 }
 
+//https://adventofcode.com/2016/day/12
 
 executeText();
