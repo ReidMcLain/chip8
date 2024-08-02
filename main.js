@@ -9,50 +9,80 @@ var fs = require("fs");
 var registers = {
     "a": 0,
     "b": 0,
-    "c": 0,
+    "c": 1,
     "d": 0
 };
-var inputData = fs.readFileSync('copy.txt', 'utf8');
+var PC = 0;
+var inputData = fs.readFileSync('input.txt', 'utf8');
 // console.log(inputData);
 var readCommands = inputData.split(/\r?\n/);
-//console.log(readCommands);
-//es6 syntax
+// console.log(readCommands);
+// es6 syntax
 //work on these functions
 var copy = function (x, y) {
-    console.log("register ".concat(y, " before: ").concat(registers[y]));
-    registers[y] = x;
-    console.log("register ".concat(y, " after: ").concat(registers[y]));
+    // console.log(`register ${y} before: ${registers[y]}`);
+    if ((/[a-zA-Z]/).test(x)) {
+        registers[y] = registers[x];
+        // console.log((/[a-zA-Z]/).test(x));
+    }
+    else {
+        registers[y] = Number(x);
+    }
+    // console.log(`register ${y} after: ${registers[y]}`);
     // console.log(y);
     // console.log(x);
+    // console.log(typeof registers[y]);
 };
-// const increase = (x: string) => {
-//     registers[x]++;
-// }
-// const decrease = (x: string) => {
-//     registers[x]--;
-// }
-// const jump = (x?: string, y?: string) => {
-// }
+var increase = function (x) {
+    // console.log(`register ${x} before: ${registers[x]}`);
+    registers[x]++;
+    // console.log(`register ${x} after: ${registers[x]}`);
+};
+var decrease = function (x) {
+    // console.log(`register ${x} before: ${registers[x]}`);
+    registers[x]--;
+    // console.log(`register ${x} before: ${registers[x]}`);
+};
+var jump = function (x, y) {
+    var conditional;
+    //This checks if x is a string or a number
+    if ((/[a-zA-Z]/).test(x)) {
+        //If Register x does not equal zero
+        conditional = registers[x] !== 0;
+    }
+    else {
+        //If x is passed in as a number and not equal to zero
+        conditional = Number(x) !== 0;
+    }
+    if (conditional) {
+        // console.log(readCommands[PC]);
+        PC += Number(y);
+        PC--;
+        // console.log(readCommands[PC]);
+    }
+};
 var executeText = function () {
-    readCommands.forEach(function (command) {
-        var pieces = command.split(' ');
-        //console.log(pieces);
+    while (PC < readCommands.length) {
+        var pieces = readCommands[PC].split(' ');
+        // console.log(pieces);
         switch (pieces[0]) {
             case 'cpy':
                 copy(pieces[1], pieces[2]);
                 break;
-            // case 'inc':
-            //     increase();
-            //     break;
-            // case 'dec':
-            //     decrease();
-            //     break;
-            // case 'jnz':
-            //     jump();
-            //     break;
+            case 'inc':
+                increase(pieces[1]);
+                break;
+            case 'dec':
+                decrease(pieces[1]);
+                break;
+            case 'jnz':
+                jump(pieces[1], pieces[2]);
+                break;
             default:
         }
-    });
+        PC++;
+    }
+    console.log(registers);
 };
 //https://adventofcode.com/2016/day/12
 executeText();
